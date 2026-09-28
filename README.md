@@ -1,4 +1,5 @@
-# Albedo
+
+![Albedo banner](docs/albedo_banner.png)
 
 Flip plots between dark and light backgrounds while **keeping their hues**: blue stays blue, orange stays orange. Use it to move a figure from a dark talk slide into a light paper, or the other way round, without re-plotting.
 
