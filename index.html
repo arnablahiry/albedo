@@ -13,15 +13,18 @@
 :root{
   --bg:#f5f4f0; --panel:#fffefb; --ink:#1a1812; --muted:#645f52; --line:#dedad0;
   --accent:#b8860b; --accent-ink:#1a1406; --checker:#ebe8e0; --warn:#9a5b00;
+  --field:#faf9f5; --track:#e6e2d7; --thumb:#ffffff; --shadow:0 1px 2px rgba(60,48,20,.18); --chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23645f52' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:light;
   --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#100f0c; --panel:#1a1914; --ink:#ebe9e3; --muted:#9a9587; --line:#2e2c25;
-  --accent:#e3b341; --accent-ink:#15120a; --checker:#24221c; --warn:#f0b35a; color-scheme:dark;}}
+  --accent:#e3b341; --accent-ink:#15120a; --checker:#24221c; --warn:#f0b35a; color-scheme:dark;
+  --field:#141310; --track:#35332c; --thumb:#f2efe6; --shadow:0 1px 2px rgba(0,0,0,.5); --chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%239a9587' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");}}
 :root[data-theme="dark"]{
   --bg:#100f0c; --panel:#1a1914; --ink:#ebe9e3; --muted:#9a9587; --line:#2e2c25;
-  --accent:#e3b341; --accent-ink:#15120a; --checker:#24221c; --warn:#f0b35a; color-scheme:dark;}
+  --accent:#e3b341; --accent-ink:#15120a; --checker:#24221c; --warn:#f0b35a; color-scheme:dark;
+  --field:#141310; --track:#35332c; --thumb:#f2efe6; --shadow:0 1px 2px rgba(0,0,0,.5); --chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%239a9587' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;padding-inline:20px;padding-block:28px 48px}
@@ -38,11 +41,44 @@ h1{font-family:"Pixelify Sans",var(--mono);font-size:clamp(64px,12vw,120px);font
 .field .row{display:flex;align-items:center;gap:8px;min-height:34px}
 .field output,.num{font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums}
 .field .hint{font-size:12px;color:var(--muted)}
-input.num.sm{width:66px;text-align:right}
-.unit{font-family:var(--mono);font-size:13px;color:var(--muted);margin-left:-4px}
-input[type=range]{flex:1;min-width:0;accent-color:var(--accent)}
-input[type=color]{width:38px;height:30px;padding:0;border:1px solid var(--line);border-radius:6px;background:var(--bg);cursor:pointer}
-.num{width:84px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:6px 8px}
+/* ---- custom form controls (no browser defaults, so both themes match) ---- */
+input[type=range]{-webkit-appearance:none;appearance:none;flex:1;min-width:0;height:22px;margin:0;background:transparent;cursor:pointer;--a:0%;--b:50%}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:999px;background:linear-gradient(to right,transparent var(--a),var(--accent) var(--a),var(--accent) var(--b),transparent var(--b)),var(--track)}
+input[type=range].centered::-moz-range-progress{background:transparent}
+input[type=range]::-moz-range-track{height:4px;border-radius:999px;background:var(--track)}
+input[type=range]::-moz-range-progress{height:4px;border-radius:999px;background:var(--accent)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;margin-top:-6px;border-radius:50%;background:var(--thumb);border:2px solid var(--accent);box-shadow:var(--shadow);transition:transform .12s}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--thumb);border:2px solid var(--accent);box-shadow:var(--shadow)}
+input[type=range]:hover::-webkit-slider-thumb{transform:scale(1.12)}
+input[type=range]:focus-visible{outline:none}
+input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 30%,transparent)}
+input[type=range]:focus-visible::-moz-range-thumb{box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 30%,transparent)}
+input[type=range]:disabled{cursor:default}
+input[type=range]:disabled::-webkit-slider-thumb{border-color:var(--muted)}
+input[type=range]:disabled::-moz-range-thumb{border-color:var(--muted)}
+input[type=number]{-moz-appearance:textfield;appearance:textfield}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.numbox{display:inline-flex;align-items:stretch;height:32px;background:var(--field);border:1px solid var(--line);border-radius:7px;overflow:hidden;transition:border-color .12s}
+.numbox:hover{border-color:var(--muted)}
+.numbox:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+.numbox input{width:58px;border:0;background:transparent;color:var(--ink);font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;text-align:right;padding:0 2px 0 8px;outline:none}
+.numbox.wide input{width:64px}
+.numbox .unit{align-self:center;font-family:var(--mono);font-size:12px;color:var(--muted);padding-right:6px;min-width:10px}
+.numbox .steps{display:flex;flex-direction:column;border-left:1px solid var(--line)}
+.numbox .steps button{flex:1;width:20px;padding:0;border:0;border-radius:0;background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center}
+.numbox .steps button+button{border-top:1px solid var(--line)}
+.numbox .steps button:hover:not(:disabled){background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--ink)}
+.numbox .steps svg{width:8px;height:8px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.numbox.disabled{opacity:.55}
+.swatch{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 10px 0 4px;background:var(--field);border:1px solid var(--line);border-radius:7px;cursor:pointer;transition:border-color .12s}
+.swatch:hover{border-color:var(--muted)}
+.swatch:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+.swatch input{-webkit-appearance:none;appearance:none;width:24px;height:24px;padding:0;border:0;background:none;cursor:pointer}
+.swatch input::-webkit-color-swatch-wrapper{padding:0}
+.swatch input::-webkit-color-swatch{border:1px solid var(--line);border-radius:5px}
+.swatch input::-moz-color-swatch{border:1px solid var(--line);border-radius:5px}
+.swatch span{font-family:var(--mono);font-size:12.5px;color:var(--ink)}
+.swatch-pair{display:flex;flex-wrap:wrap;gap:8px}
 .field.off{opacity:.45}
 .settings-head{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center}
 .formula{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
@@ -57,7 +93,9 @@ button:disabled{opacity:.5;cursor:default}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
 .seg button{border:0;border-radius:0;background:transparent}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
-select{font:inherit;font-size:14px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:6px 8px}
+select{-webkit-appearance:none;appearance:none;font:inherit;font-size:14px;height:32px;background:var(--field) var(--chev) no-repeat right 10px center/11px 8px;color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:0 30px 0 10px;cursor:pointer;transition:border-color .12s}
+select:hover{border-color:var(--muted)}
+select:focus-visible{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
 .filebtn input{position:absolute;opacity:0;width:1px;height:1px}
 .spacer{flex:1}
 .status{font-size:13px;color:var(--muted);font-family:var(--mono)}
@@ -107,14 +145,14 @@ figcaption b{color:var(--ink);font-weight:500}
     <div class="settings-head"><span class="label">Settings</span><button type="button" id="reset">Reset</button></div>
     <div class="field">
       <label class="label" for="hue">Hue shift</label>
-      <div class="row"><input type="range" id="hue" min="-180" max="180" step="1" value="0"><input type="number" class="num sm" id="hueNum" min="-180" max="180" step="1" value="0" aria-label="Hue shift in degrees"><span class="unit">°</span></div>
+      <div class="row"><input type="range" id="hue" min="-180" max="180" step="1" value="0"><input type="number" id="hueNum" data-unit="°" min="-180" max="180" step="1" value="0" aria-label="Hue shift in degrees"></div>
       <span class="hint">0° keeps every hue as it was</span>
     </div>
     <div class="field">
       <span class="label">Output range</span>
-      <div class="row">
-        <input type="color" id="bp" value="#000000" aria-label="Darkest output colour"><span class="num" id="bpOut" style="border:0;padding:0;width:auto">#000000</span>
-        <input type="color" id="wp" value="#ffffff" aria-label="Lightest output colour"><span class="num" id="wpOut" style="border:0;padding:0;width:auto">#ffffff</span>
+      <div class="row swatch-pair">
+        <label class="swatch" title="Darkest output colour"><input type="color" id="bp" value="#000000" aria-label="Darkest output colour"><span id="bpOut">#000000</span></label>
+        <label class="swatch" title="Lightest output colour"><input type="color" id="wp" value="#ffffff" aria-label="Lightest output colour"><span id="wpOut">#ffffff</span></label>
       </div>
       <span class="hint">Darkest and lightest colours; match your slide background</span>
     </div>
@@ -125,12 +163,12 @@ figcaption b{color:var(--ink);font-weight:500}
     </div>
     <div class="field off" id="qField">
       <label class="label" for="q">Quality</label>
-      <div class="row"><input type="range" id="q" min="50" max="100" step="1" value="92" disabled><input type="number" class="num sm" id="qNum" min="50" max="100" step="1" value="92" disabled aria-label="Quality"><span class="unit">%</span></div>
+      <div class="row"><input type="range" id="q" min="50" max="100" step="1" value="92" disabled><input type="number" id="qNum" data-unit="%" min="50" max="100" step="1" value="92" disabled aria-label="Quality"></div>
       <span class="hint">JPEG, WebP and compressed PDF</span>
     </div>
     <div class="field off" id="dpiField">
       <label class="label" for="dpi">PDF render DPI</label>
-      <div class="row"><input type="number" class="num" id="dpi" min="36" max="1200" step="1" value="300" disabled><span class="hint" id="dpiPx"></span></div>
+      <div class="row"><input type="number" id="dpi" data-unit="" data-wide min="36" max="1200" step="1" value="300" disabled><span class="hint" id="dpiPx"></span></div>
       <span class="hint" id="dpiHint">Open a PDF to change this</span>
     </div>
     <div class="field">
@@ -341,7 +379,7 @@ function show() {
   $("pager").hidden = S.pages.length < 2;
   $("pageOut").textContent = `${S.page + 1} / ${S.pages.length}`;
   const isPdf = S.kind === "pdf";
-  $("dpi").disabled = !isPdf; $("dpiField").classList.toggle("off", !isPdf);
+  $("dpi").disabled = !isPdf; syncDisabled(); $("dpiField").classList.toggle("off", !isPdf);
   $("dpiHint").textContent = isPdf ? "Higher is sharper but slower" : "Open a PDF to change this";
   $("dpiPx").textContent = isPdf ? `${p.src.width}×${p.src.height}` : "";
   setButtons();
@@ -412,13 +450,45 @@ $("next").onclick = () => { if (S.page < S.pages.length - 1) { S.page++; show();
 $("file").onchange = e => { openFile(e.target.files[0]); e.target.value = ""; };
 let timer = 0;
 const reprocess = () => { clearTimeout(timer); timer = setTimeout(() => { if (!S.busy && S.pages.length) processAll(); }, 120); };
+// number boxes: custom stepper arrows + unit, styled like the rest of the page
+const CHEV = d => `<svg viewBox="0 0 10 10" aria-hidden="true"><path d="${d}"/></svg>`;
+document.querySelectorAll('input[type=number]').forEach(n => {
+  const box = document.createElement("span");
+  box.className = "numbox" + (n.hasAttribute("data-wide") ? " wide" : "");
+  n.replaceWith(box); box.append(n);
+  const unit = document.createElement("span"); unit.className = "unit"; unit.textContent = n.dataset.unit || ""; box.append(unit);
+  const steps = document.createElement("span"); steps.className = "steps";
+  const mk = (dir, d, label) => {
+    const b = document.createElement("button"); b.type = "button"; b.tabIndex = -1; b.setAttribute("aria-label", label); b.innerHTML = CHEV(d);
+    b.onclick = () => { if (n.disabled) return; dir > 0 ? n.stepUp() : n.stepDown(); n.dispatchEvent(new Event("input")); n.dispatchEvent(new Event("change")); };
+    return b;
+  };
+  steps.append(mk(1, "M2 6.5l3-3 3 3", "Increase"), mk(-1, "M2 3.5l3 3 3-3", "Decrease"));
+  box.append(steps);
+});
+function syncDisabled() {
+  document.querySelectorAll(".numbox").forEach(b => {
+    const n = b.querySelector("input"); b.classList.toggle("disabled", n.disabled);
+    b.querySelectorAll("button").forEach(x => x.disabled = n.disabled);
+  });
+}
+// fill the track from the start, or from zero for ranges that go negative (hue shift)
+const paintRange = r => {
+  const pct = v => (v - r.min) / (r.max - r.min) * 100, v = pct(+r.value);
+  const z = +r.min < 0 ? pct(0) : 0;
+  r.classList.toggle("centered", +r.min < 0);
+  r.style.setProperty("--a", `${Math.min(z, v)}%`); r.style.setProperty("--b", `${Math.max(z, v)}%`);
+};
+
 // slider <-> number box, kept in sync both ways
 function pair(rangeId, numId, onChange) {
   const r = $(rangeId), n = $(numId);
   const clamp = v => Math.max(+r.min, Math.min(+r.max, Math.round(v)));
-  r.oninput = () => { n.value = r.value; onChange(); };
-  n.oninput = () => { if (n.value === "" || n.value === "-" || isNaN(+n.value)) return; r.value = clamp(+n.value); onChange(); };
-  n.onchange = () => { n.value = clamp(isNaN(+n.value) || n.value === "" ? +r.value : +n.value); r.value = n.value; onChange(); };
+  const done = () => { paintRange(r); onChange(); };
+  paintRange(r);
+  r.oninput = () => { n.value = r.value; done(); };
+  n.oninput = () => { if (n.value === "" || n.value === "-" || isNaN(+n.value)) return; r.value = clamp(+n.value); done(); };
+  n.onchange = () => { n.value = clamp(isNaN(+n.value) || n.value === "" ? +r.value : +n.value); r.value = n.value; done(); };
   n.onkeydown = e => { if (e.key === "Enter") n.blur(); };
 }
 pair("hue", "hueNum", reprocess);
@@ -426,7 +496,7 @@ $("bp").oninput = () => { $("bpOut").textContent = $("bp").value; reprocess(); }
 $("wp").oninput = () => { $("wpOut").textContent = $("wp").value; reprocess(); };
 function syncQuality() {
   const used = $("fmt").value !== "png" || $("pdfImg").value === "jpg";
-  $("q").disabled = !used; $("qNum").disabled = !used; $("qField").classList.toggle("off", !used);
+  $("q").disabled = !used; $("qNum").disabled = !used; syncDisabled(); $("qField").classList.toggle("off", !used);
   $("dlPng").textContent = `Download ${{ png: "PNG", jpg: "JPEG", webp: "WebP" }[$("fmt").value]}`;
 }
 $("fmt").onchange = syncQuality; $("pdfImg").onchange = syncQuality;

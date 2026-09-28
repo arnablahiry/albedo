@@ -226,8 +226,10 @@ def flip_figure(fig, inplace: bool = False, **opts):
                 bp = a.get_bbox_patch()
                 if bp is not None and id(bp) not in seen:
                     seen.add(id(bp))
-                    bp.set_facecolor(fc(bp.get_facecolor()))
-                    bp.set_edgecolor(fc(bp.get_edgecolor()))
+                    if bp.get_facecolor()[3] > 0:
+                        bp.set_facecolor(fc(bp.get_facecolor()))
+                    if bp.get_edgecolor()[3] > 0:
+                        bp.set_edgecolor(fc(bp.get_edgecolor()))
             elif isinstance(a, (AxesImage, FigureImage)):
                 data = a.get_array()
                 if data is not None and np.ndim(data) == 3:          # RGB(A) picture
@@ -239,16 +241,22 @@ def flip_figure(fig, inplace: bool = False, **opts):
                     a.set_cmap(flip_cmap(a.get_cmap()))
                 else:
                     face = a.get_facecolor()
-                    if len(face):
+                    if len(face) and np.any(np.asarray(face)[..., 3] > 0):
                         a.set_facecolor(_flip_rgba_array(face, **opts))
                 ec = a.get_edgecolor()
                 edge_follows_face = str(getattr(a, "_original_edgecolor", "")) == "face"
                 if not isinstance(ec, str) and len(ec) and not edge_follows_face \
+                        and np.any(np.asarray(ec)[..., 3] > 0) \
                         and not (mapped(a) and getattr(a, "_edge_is_mapped", False)):
                     a.set_edgecolor(_flip_rgba_array(ec, **opts))
             elif isinstance(a, Patch):
-                a.set_facecolor(fc(a.get_facecolor()))
-                a.set_edgecolor(fc(a.get_edgecolor()))
+                # fully transparent colours stay untouched: re-setting them would let
+                # the patch's own alpha make an invisible edge visible
+                face, edge = a.get_facecolor(), a.get_edgecolor()
+                if face[3] > 0:
+                    a.set_facecolor(fc(face))
+                if edge[3] > 0:
+                    a.set_edgecolor(fc(edge))
         except Exception as e:  # never let one odd artist stop the rest
             print(f"albedo: skipped {type(a).__name__}: {e}", file=sys.stderr)
 

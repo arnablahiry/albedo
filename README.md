@@ -12,6 +12,10 @@ pip install -e ~/repos/albedo[all]
 
 This gives you `import albedo` everywhere and an `albedo` command. `[all]` adds matplotlib and PDF support.
 
+## Demo
+
+`demo.ipynb` walks through everything: flipping figures, both modes, all options, saving vector PDFs, images and files, palettes, and batch use. It is saved with its outputs, so you can read it without running it.
+
 ## In Python with matplotlib
 
 ```python
