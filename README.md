@@ -121,6 +121,8 @@ Open `index.html` in a browser. Drop in, paste or open an image or PDF, adjust t
 
 The page loads its PDF reader and writer (pdf.js, jsPDF) and its fonts from public CDNs. Images still work offline; PDFs need an internet connection.
 
+![Screenshot of the Albedo web graphical interface](docs/readme_example.png)
+
 ## How it works
 
 **`css` mode** inverts each colour (`1 − rgb`) and then applies the Filter Effects spec's `hue-rotate(180°)` matrix. That matrix keeps brightness fixed and turns hue by 180°, which cancels the hue flip caused by inverting. Brightness flips and hue stays put.
