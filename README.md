@@ -10,7 +10,9 @@ Albedo comes in three forms:
 
 - **A Python package** that recolours matplotlib figures directly, so flipped PDFs and SVGs stay vector.
 - **A command-line tool** for image and PDF files.
-- **A web app** (`index.html`) for flipping one-off files in the browser.
+- **A web app** for flipping one-off files in the browser.
+
+![Screenshot of the Albedo web graphical interface](docs/readme_example.png)
 
 ## Install
 
@@ -51,26 +53,26 @@ albedo figure.pdf --dpi 300                # -> figure_inverted.pdf
 
 ## Python API
 
-| Function | What it does |
-|---|---|
-| `flip_figure(fig, inplace=False, **opts)` | Recolours a matplotlib figure and returns the flipped copy (or `fig` itself with `inplace=True`). |
-| `compare(fig, dpi=120, show=True, **opts)` | Shows the original and flipped figure side by side; returns the comparison figure. |
-| `savefig_pair(fig, path, suffix="_inverted", flip_opts=None, **savefig_kw)` | Saves the figure and its flipped copy; returns both paths. |
-| `flip_image(img, **opts)` | Flips a NumPy array or PIL image and returns the same type. |
-| `flip_file(src, dst=None, dpi=300, **opts)` | Flips an image or PDF file on disk; returns the output path. |
-| `flip_color(color, **opts)` | Flips one matplotlib colour spec; returns an RGBA tuple. |
-| `flip_rgb(rgb, **opts)` | The core transform on float RGB values in 0–1, shape `(..., 3)`. |
+| Function                                                                      | What it does                                                                                         |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `flip_figure(fig, inplace=False, **opts)`                                   | Recolours a matplotlib figure and returns the flipped copy (or`fig` itself with `inplace=True`). |
+| `compare(fig, dpi=120, show=True, **opts)`                                  | Shows the original and flipped figure side by side; returns the comparison figure.                   |
+| `savefig_pair(fig, path, suffix="_inverted", flip_opts=None, **savefig_kw)` | Saves the figure and its flipped copy; returns both paths.                                           |
+| `flip_image(img, **opts)`                                                   | Flips a NumPy array or PIL image and returns the same type.                                          |
+| `flip_file(src, dst=None, dpi=300, **opts)`                                 | Flips an image or PDF file on disk; returns the output path.                                         |
+| `flip_color(color, **opts)`                                                 | Flips one matplotlib colour spec; returns an RGBA tuple.                                             |
+| `flip_rgb(rgb, **opts)`                                                     | The core transform on float RGB values in 0–1, shape`(..., 3)`.                                   |
 
 ### Options
 
 Every function takes the same keyword options:
 
-| Option | Default | Meaning |
-|---|---|---|
-| `mode` | `"css"` | `"css"` matches the browser filter exactly; `"oklab"` flips *perceived* lightness in the OKLab colour space and keeps hue and saturation more faithfully. |
-| `hue` | `0` | Extra hue rotation in degrees after the flip. `0` keeps every hue. |
-| `black` | `"#000000"` | Darkest output colour. Set it to your slide background so a flipped figure blends in. |
-| `white` | `"#ffffff"` | Lightest output colour. |
+| Option    | Default       | Meaning                                                                                                                                                         |
+| --------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mode`  | `"css"`     | `"css"` matches the browser filter exactly; `"oklab"` flips *perceived* lightness in the OKLab colour space and keeps hue and saturation more faithfully. |
+| `hue`   | `0`         | Extra hue rotation in degrees after the flip.`0` keeps every hue.                                                                                             |
+| `black` | `"#000000"` | Darkest output colour. Set it to your slide background so a flipped figure blends in.                                                                           |
+| `white` | `"#ffffff"` | Lightest output colour.                                                                                                                                         |
 
 Colours can be hex strings, names (`"navy"`; matplotlib names such as `"tab:blue"` and `"C0"` when matplotlib is installed), or RGB tuples in 0–1 (or 0–255).
 
@@ -100,28 +102,20 @@ albedo [-h] [--mode {css,oklab}] [--hue HUE] [--black BLACK] [--white WHITE]
        [--dpi DPI] [-o OUTDIR] [--suffix SUFFIX] inputs [inputs ...]
 ```
 
-| Flag | Default | Meaning |
-|---|---|---|
-| `--mode` | `css` | `css` or `oklab` |
-| `--hue` | `0` | extra hue shift in degrees |
-| `--black`, `--white` | `#000000`, `#ffffff` | output range |
-| `--dpi` | `300` | resolution for rasterising PDF pages |
-| `-o`, `--outdir` | next to each input | output folder |
-| `--suffix` | `_inverted` | added to each output file name |
+| Flag                     | Default                  | Meaning                              |
+| ------------------------ | ------------------------ | ------------------------------------ |
+| `--mode`               | `css`                  | `css` or `oklab`                 |
+| `--hue`                | `0`                    | extra hue shift in degrees           |
+| `--black`, `--white` | `#000000`, `#ffffff` | output range                         |
+| `--dpi`                | `300`                  | resolution for rasterising PDF pages |
+| `-o`, `--outdir`     | next to each input       | output folder                        |
+| `--suffix`             | `_inverted`            | added to each output file name       |
 
 ```bash
 albedo figs/*.png --mode oklab --black '#0c0d12' -o figs/dark/
 ```
 
 The command flips every file it can, reports any it couldn't on stderr, and exits with status 1 if any failed. It refuses to overwrite its input.
-
-## Web app
-
-Open `index.html` in a browser. Drop in, paste or open an image or PDF, adjust the settings (mode, hue shift, output range, PDF resolution, output format and quality), and download the result as PNG, JPEG, WebP or PDF. It has a light/dark toggle, handles multi-page PDFs, and processes files in your browser without uploading them.
-
-The page loads its PDF reader and writer (pdf.js, jsPDF) and its fonts from public CDNs. Images still work offline; PDFs need an internet connection.
-
-![Screenshot of the Albedo web graphical interface](docs/readme_example.png)
 
 ## How it works
 
