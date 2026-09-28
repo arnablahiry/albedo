@@ -4,20 +4,40 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "albedo"
-version = "0.2.0"
+dynamic = ["version"]
 description = "Flip plots between dark and light backgrounds while keeping their hues"
 readme = "README.md"
+license = { file = "LICENSE" }
 requires-python = ">=3.9"
 authors = [{ name = "Arnab Lahiry", email = "alahiry@physics.uoc.gr" }]
-dependencies = ["numpy", "pillow"]
+keywords = ["matplotlib", "dark mode", "figures", "colour", "plotting", "slides"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Framework :: Matplotlib",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Visualization",
+]
+dependencies = ["numpy>=1.21", "pillow>=9"]
 
 [project.optional-dependencies]
-pdf = ["pymupdf"]
-mpl = ["matplotlib"]
-all = ["pymupdf", "matplotlib"]
+pdf = ["pymupdf>=1.20"]
+mpl = ["matplotlib>=3.7"]
+all = ["pymupdf>=1.20", "matplotlib>=3.7"]
+dev = ["pymupdf>=1.20", "matplotlib>=3.7", "pytest>=7", "ruff"]
 
 [project.scripts]
 albedo = "albedo:main"
 
 [tool.setuptools]
 py-modules = ["albedo"]
+
+[tool.setuptools.dynamic]
+version = { attr = "albedo.__version__" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120

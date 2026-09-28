@@ -1,8 +1,11 @@
 __pycache__/
-*.pyc
-.DS_Store
-*_inverted.*
-.venv/
+*.py[cod]
 *.egg-info/
 build/
+dist/
+.venv/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.DS_Store
 demo_outputs/

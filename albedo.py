@@ -34,7 +34,7 @@ from PIL import Image
 
 __all__ = ["flip_rgb", "flip_color", "flip_image", "flip_file",
            "flip_figure", "compare", "savefig_pair"]
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 
 # =================================================================== maths
@@ -68,15 +68,24 @@ _M1i, _M2i = np.linalg.inv(_M1), np.linalg.inv(_M2)
 
 
 def _as_rgb01(c) -> np.ndarray:
-    """A colour given as '#rrggbb', a name, or an RGB tuple (0-1 or 0-255)."""
+    """A colour given as a hex string or name ('#0c0d12', 'navy'), or an RGB
+    tuple in 0-1 (or 0-255 if any value is above 1)."""
     if isinstance(c, str):
         try:
-            from matplotlib.colors import to_rgb
+            from matplotlib.colors import to_rgb        # also knows 'C0', '0.3', 'tab:blue'
             return np.array(to_rgb(c))
         except ImportError:
-            c = c.lstrip("#")
-            return np.array([int(c[i:i + 2], 16) for i in (0, 2, 4)]) / 255.0
-    c = np.asarray(c, dtype=float)[:3]
+            pass
+        except ValueError as e:
+            raise ValueError(f"not a colour: {c!r}") from e
+        from PIL import ImageColor
+        try:
+            return np.array(ImageColor.getrgb(c)[:3]) / 255.0
+        except ValueError as e:
+            raise ValueError(f"not a colour: {c!r}") from e
+    c = np.asarray(c, dtype=float).ravel()[:3]
+    if c.shape != (3,):
+        raise ValueError(f"expected an RGB colour, got {c!r}")
     return c / 255.0 if c.max() > 1 else c
 
 
@@ -87,7 +96,9 @@ def flip_rgb(rgb, mode: str = "css", hue: float = 0.0, black="#000000", white="#
     black  darkest output colour (e.g. your dark slide background)
     white  lightest output colour
     """
-    rgb = np.asarray(rgb, dtype=float)
+    rgb = np.clip(np.asarray(rgb, dtype=float), 0.0, 1.0)
+    if rgb.shape[-1:] != (3,):
+        raise ValueError(f"expected RGB values with a last axis of length 3, got shape {rgb.shape}")
     if mode == "css":
         out = np.clip((1.0 - rgb) @ _hue_matrix(180.0 + hue).T, 0.0, 1.0)
     elif mode == "oklab":
@@ -121,32 +132,50 @@ def _flip_rgba_array(arr, **opts) -> np.ndarray:
 
 # ================================================================== images
 def flip_image(img, **opts):
-    """Flip a PIL image or an array (uint8 0-255 or float 0-1, RGB/RGBA/grey).
-    Returns the same kind of object it was given. Alpha is kept."""
+    """Flip a PIL image or a NumPy array and return the same kind of object.
+
+    Arrays may be greyscale (H, W), RGB (H, W, 3) or RGBA (H, W, 4); integer
+    arrays use their dtype's full range (uint8 0-255, uint16 0-65535) and keep
+    their dtype, float arrays are taken as 0-1. Greyscale input comes back as
+    RGB, because a hue shift or output range can add colour. Alpha is kept.
+    PIL images come back as 8-bit RGB or RGBA.
+    """
     if isinstance(img, Image.Image):
-        has_alpha = img.mode in ("RGBA", "LA") or (img.mode == "P" and "transparency" in img.info)
+        has_alpha = img.mode in ("RGBA", "LA", "PA") or "transparency" in img.info
         img = img.convert("RGBA" if has_alpha else "RGB")
-        out = flip_image(np.asarray(img), **opts)
-        return Image.fromarray(out, img.mode)
+        return Image.fromarray(flip_image(np.asarray(img), **opts), img.mode)
     arr = np.asarray(img)
+    if arr.ndim not in (2, 3) or (arr.ndim == 3 and arr.shape[-1] not in (3, 4)):
+        raise ValueError(f"expected an (H, W), (H, W, 3) or (H, W, 4) image, got shape {arr.shape}")
+    if arr.dtype == bool:
+        arr = arr.astype(np.uint8) * 255
     is_int = np.issubdtype(arr.dtype, np.integer)
-    f = arr.astype(float) / 255.0 if is_int else arr.astype(float)
+    scale = float(np.iinfo(arr.dtype).max) if is_int else 1.0
+    f = arr.astype(float) / scale
     if f.ndim == 2:
         f = np.repeat(f[..., None], 3, axis=-1)
-    f = f.copy()
     f[..., :3] = flip_rgb(f[..., :3], **opts)
-    return np.round(np.clip(f, 0, 1) * 255).astype(np.uint8) if is_int else f
+    if is_int:
+        return np.round(np.clip(f, 0, 1) * scale).astype(arr.dtype)
+    return f.astype(arr.dtype) if np.issubdtype(arr.dtype, np.floating) else f
 
 
 def flip_file(src, dst=None, dpi: int = 300, **opts) -> Path:
     """Flip an image or PDF file on disk. Returns the output path."""
     src = Path(src)
     dst = Path(dst) if dst else src.with_name(f"{src.stem}_inverted{src.suffix}")
+    if not src.is_file():
+        raise FileNotFoundError(f"no such file: {src}")
+    if dst.resolve() == src.resolve():
+        raise ValueError(f"output would overwrite the input: {src}")
     if src.suffix.lower() == ".pdf":
         try:
             import pymupdf
         except ImportError:
-            sys.exit("PDF input needs pymupdf:  pip install pymupdf")
+            try:
+                import fitz as pymupdf                        # PyMuPDF < 1.24
+            except ImportError:
+                raise ImportError("PDF files need PyMuPDF:  pip install pymupdf") from None
         doc_in, doc_out = pymupdf.open(src), pymupdf.open()
         for page in doc_in:
             pix = page.get_pixmap(dpi=dpi, alpha=False)
@@ -182,10 +211,18 @@ def flip_figure(fig, inplace: bool = False, **opts):
     from matplotlib.patches import Patch
     from matplotlib.text import Text
 
+    flip_rgb([0.5, 0.5, 0.5], **opts)          # validate options before doing any work
     if not inplace:
-        fig = pickle.loads(pickle.dumps(fig))
+        try:
+            fig = pickle.loads(pickle.dumps(fig))
+        except Exception as e:
+            raise TypeError(
+                "this figure can't be copied (something in it can't be pickled, "
+                f"{type(e).__name__}: {e}); use flip_figure(fig, inplace=True)") from e
 
-    fc = lambda c: flip_color(c, **opts)
+    def fc(c):
+        return flip_color(c, **opts)
+
     cmaps: dict[int, Colormap] = {}
 
     def flip_cmap(cm: Colormap) -> Colormap:
@@ -260,11 +297,41 @@ def flip_figure(fig, inplace: bool = False, **opts):
         except Exception as e:  # never let one odd artist stop the rest
             print(f"albedo: skipped {type(a).__name__}: {e}", file=sys.stderr)
 
+    if not inplace:
+        _reconnect_colormapping(fig)
+
     # (fig.patch, the figure background, was recoloured with the other patches)
     # style sheets such as dark_background pin rcParams["savefig.facecolor"];
     # make this figure's own savefig default to its (flipped) facecolor instead
     fig.savefig = _SaveWithOwnFace(fig)
     return fig
+
+
+def _reconnect_colormapping(fig):
+    """Pickling a figure drops the callbacks that tie norm -> colorizer -> artist
+    -> colorbar together, so after a copy, set_cmap()/set_clim() would no longer
+    reach the colorbar. Reconnect whatever links are missing."""
+    import matplotlib.cm as mcm
+
+    def missing(obj):
+        reg = getattr(obj, "callbacks", None)
+        return reg is not None and not reg.callbacks.get("changed")
+
+    done = set()
+    for sm in fig.findobj(lambda o: isinstance(o, mcm.ScalarMappable)):
+        colorizer = getattr(sm, "_colorizer", None)          # matplotlib >= 3.10
+        if colorizer is not None:
+            if id(colorizer) not in done:
+                done.add(id(colorizer))
+                if missing(colorizer.norm):
+                    colorizer._id_norm = colorizer.norm.callbacks.connect("changed", colorizer.changed)
+            if missing(colorizer):
+                sm._id_colorizer = colorizer.callbacks.connect("changed", sm.changed)
+        elif sm.norm is not None and missing(sm.norm):     # older matplotlib
+            sm._id_norm = sm.norm.callbacks.connect("changed", sm.changed)
+        cb = getattr(sm, "colorbar", None)
+        if cb is not None and hasattr(cb, "update_normal") and missing(sm):
+            sm.colorbar_cid = sm.callbacks.connect("changed", cb.update_normal)
 
 
 class _SaveWithOwnFace:
@@ -334,12 +401,23 @@ def main(argv=None):
     args = p.parse_args(argv)
     opts = dict(mode=args.mode, hue=args.hue, black=args.black, white=args.white)
 
+    try:
+        flip_rgb([0.5, 0.5, 0.5], **opts)
+    except ValueError as e:
+        p.error(str(e))
+
+    failed = 0
     for src in args.inputs:
         outdir = args.outdir or src.parent
-        outdir.mkdir(parents=True, exist_ok=True)
-        dst = flip_file(src, outdir / f"{src.stem}{args.suffix}{src.suffix}", dpi=args.dpi, **opts)
-        print(f"{src} -> {dst}")
+        try:
+            outdir.mkdir(parents=True, exist_ok=True)
+            dst = flip_file(src, outdir / f"{src.stem}{args.suffix}{src.suffix}", dpi=args.dpi, **opts)
+            print(f"{src} -> {dst}")
+        except Exception as e:
+            failed += 1
+            print(f"albedo: {src}: {e}", file=sys.stderr)
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
