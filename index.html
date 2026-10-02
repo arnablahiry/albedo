@@ -5,23 +5,23 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Albedo</title>
 <meta name="description" content="Flip the lights, keep the colours – make ‘accurate’ dark-mode versions of scientific figures for presentations.">
-<link rel="icon" type="image/png" sizes="32x32" href="docs/images/favicon-32.png">
-<link rel="icon" type="image/png" sizes="192x192" href="docs/images/favicon-192.png">
-<link rel="apple-touch-icon" href="docs/images/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="docs/images/favicon-32.png?v=4">
+<link rel="icon" type="image/png" sizes="192x192" href="docs/images/favicon-192.png?v=4">
+<link rel="apple-touch-icon" href="docs/images/apple-touch-icon.png?v=4">
 <!-- link previews (Slack, WhatsApp, iMessage, X, LinkedIn, ...) need absolute URLs -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Albedo">
 <meta property="og:title" content="Albedo">
 <meta property="og:description" content="Flip the lights, keep the colours – make ‘accurate’ dark-mode versions of scientific figures for presentations.">
 <meta property="og:url" content="https://arnablahiry.github.io/albedo/">
-<meta property="og:image" content="https://arnablahiry.github.io/albedo/docs/images/social.png?v=2">
-<meta property="og:image:width" content="512">
-<meta property="og:image:height" content="512">
-<meta property="og:image:alt" content="Albedo logo: a pixel-art face, its right half colour-flipped">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://arnablahiry.github.io/albedo/docs/images/social.png?v=4">
+<meta property="og:image:width" content="1296">
+<meta property="og:image:height" content="466">
+<meta property="og:image:alt" content="Albedo: a pixel-art face with its right half colour-flipped, the word Albedo, and the line Flip the lights, keep the colours.">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Albedo">
 <meta name="twitter:description" content="Flip the lights, keep the colours – make ‘accurate’ dark-mode versions of scientific figures for presentations.">
-<meta name="twitter:image" content="https://arnablahiry.github.io/albedo/docs/images/social.png?v=2">
+<meta name="twitter:image" content="https://arnablahiry.github.io/albedo/docs/images/social.png?v=4">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <link rel="preload" href="docs/fonts/abaddon-light.ttf" as="font" type="font/ttf" crossorigin>
@@ -59,13 +59,13 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font
 .wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
 header{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;padding-block:28px 12px}
 h1{font-family:"Pixelify Sans","IBM Plex Mono",ui-monospace,monospace;font-size:clamp(64px,12vw,120px);font-weight:500;line-height:.9;margin:0;letter-spacing:.03em;text-wrap:balance;display:inline-flex;align-items:baseline;gap:.18em}
-h1 .mark{height:.72em;height:1cap;width:auto;flex:none}
+h1 .mark{height:.72em;height:1cap;width:auto;flex:none;filter:invert(1) hue-rotate(180deg)}   /* light mode shows the flipped logo */
 .sub{color:var(--muted);margin:0;max-width:52ch;font-size:clamp(18px,calc(2vw + 2px),21px);font-weight:700;line-height:1.45;text-wrap:balance}
 .theme{position:absolute;top:0;right:0;display:inline-flex;align-items:center;gap:7px;font-size:14px;padding:6px 11px}
 .theme svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
 /* ---- theme switch: cross-fade the whole page (View Transitions), or fade colours where unsupported ---- */
 ::view-transition-old(root),::view-transition-new(root){animation-duration:.4s;animation-timing-function:cubic-bezier(.4,0,.2,1)}
-html.theme-fade *,html.theme-fade *::before,html.theme-fade *::after{transition:background-color .4s,color .4s,border-color .4s,fill .4s,stroke .4s,box-shadow .4s!important}
+html.theme-fade *,html.theme-fade *::before,html.theme-fade *::after{transition:background-color .4s,color .4s,border-color .4s,fill .4s,stroke .4s,box-shadow .4s,filter .4s!important}
 .bar.settings{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px 28px;align-items:start}
 @media (max-width:900px){.bar.settings{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:520px){.bar.settings{grid-template-columns:1fr}}
@@ -129,12 +129,12 @@ select{-webkit-appearance:none;appearance:none;font:inherit;font-size:15px;heigh
 select:hover{border-color:var(--muted)}
 select:focus-visible{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
 .filebtn input{position:absolute;opacity:0;width:1px;height:1px}
-.spacer{flex:1}
 .status{font-size:14px;color:var(--muted);font-family:var(--mono)}
 .status.warn{color:var(--warn)}
 .stage{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media (max-width:760px){.stage{grid-template-columns:1fr}}
 figure{margin:0;display:flex;flex-direction:column;gap:8px;min-width:0}
+.downloads{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:6px}
 figcaption{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;color:var(--muted)}
 figcaption b{color:var(--ink);font-size:15px;font-weight:700}
 .view{border:1px solid var(--line);border-radius:10px;padding:10px;min-height:160px;display:flex;align-items:center;justify-content:center;
@@ -154,9 +154,27 @@ figcaption b{color:var(--ink);font-size:15px;font-weight:700}
 .credit .heart{height:.8em;width:auto;fill:#ff7b80;shape-rendering:crispEdges;flex:none}
 .credit .sep{width:1px;height:34px;background:var(--muted);opacity:.6}
 .credit .logo{height:17px;width:auto}
-/* dark mode: flip the black wordmark with Albedo's own trick, the mark keeps its orange */
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .credit .logo{filter:invert(1) hue-rotate(180deg)}:root:not([data-theme="light"]) .credit span{color:#fff}}
+/* phones: icon-only theme button; toolbar on one row (open left, mode right), with text and padding
+   that scale down so it fits even at 320px; footer on two lines */
+@media (max-width:520px){
+  body{padding-inline:14px}
+  .tools{display:grid;grid-template-columns:auto auto;justify-content:space-between;gap:12px 10px;padding:12px}
+  .tools button,.tools .filebtn{font-size:clamp(13px,3.6vw,15px);padding-inline:clamp(8px,2.6vw,12px);white-space:nowrap}
+  .tools .label{font-size:clamp(11.5px,3.3vw,13.5px)}
+  .theme span{display:none}
+  .theme{padding:7px 9px}
+  .credit{flex-wrap:wrap;gap:8px 12px;margin-top:44px}
+  .credit .made{flex-basis:100%;justify-content:center;margin-right:0;font-size:14px}
+  .credit .me span{font-size:16px}
+  .credit .avatar{width:28px;height:28px}
+  .credit .sep{height:26px}
+  .credit .logo{height:14px}
+}
+/* Albedo the logos with the page's own maths (CSS mode): the heading logo is flipped in light mode and
+   drawn as-is in dark mode; the black Claude wordmark is flipped in dark mode */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .credit .logo{filter:invert(1) hue-rotate(180deg)}:root:not([data-theme="light"]) h1 .mark{filter:none}:root:not([data-theme="light"]) .credit span{color:#fff}}
 :root[data-theme="dark"] .credit .logo{filter:invert(1) hue-rotate(180deg)}
+:root[data-theme="dark"] h1 .mark{filter:none}
 :root[data-theme="dark"] .credit span{color:#fff}
 .tag{font-family:var(--mono);font-size:12px;border:1px solid var(--line);border-radius:4px;padding:1px 6px;color:var(--muted)}
 </style>
@@ -167,11 +185,11 @@ figcaption b{color:var(--ink);font-size:15px;font-weight:700}
 <div class="wrap">
   <header>
     <button type="button" class="theme" id="themeBtn" aria-label="Switch colour theme"></button>
-    <h1><img class="mark" src="docs/images/logo-heading.webp" alt="" width="204" height="240">Albedo</h1>
+    <h1><img class="mark" src="docs/images/logo-heading.webp?v=4" alt="" width="193" height="240">Albedo</h1>
     <p class="sub">Flip the lights, keep the colours.</p>
   </header>
 
-  <div class="bar" role="toolbar" aria-label="Controls">
+  <div class="bar tools" role="toolbar" aria-label="Controls">
     <label class="filebtn" id="openLbl">Open image or PDF
       <input type="file" id="file" accept="image/*,application/pdf,.pdf">
     </label>
@@ -181,11 +199,6 @@ figcaption b{color:var(--ink);font-size:15px;font-weight:700}
         <button type="button" id="modeCss" aria-pressed="true" title="Matches the CSS filter in the browser exactly">CSS</button>
         <button type="button" id="modeOk" aria-pressed="false" title="Flips perceived lightness in OKLab, keeps hue and chroma">OKLab</button>
       </div>
-    </div>
-    <span class="spacer"></span>
-    <div class="group">
-      <button type="button" class="primary" id="dlPng">Download image</button>
-      <button type="button" class="primary" id="dlPdf">Download PDF</button>
     </div>
   </div>
 
@@ -234,6 +247,10 @@ figcaption b{color:var(--ink);font-size:15px;font-weight:700}
     <figure>
       <figcaption><b>Flipped</b><span id="sizeOut" class="tag"></span></figcaption>
       <div class="view" id="viewOut"></div>
+      <div class="downloads">
+        <button type="button" class="primary" id="dlPng">Download image</button>
+        <button type="button" class="primary" id="dlPdf">Download PDF</button>
+      </div>
     </figure>
   </div>
 

@@ -7,10 +7,8 @@ Writes, next to this file
   favicon-32.png         browser tab icon
   favicon-192.png        larger icon (Android, bookmarks)
   apple-touch-icon.png   180 px, opaque (iOS shows transparency as black)
-  social.png             512 px, opaque, the image shown in link previews
-The opaque icons sit on 50% grey, the one colour Albedo's flip leaves unchanged
-(apps such as WhatsApp fill transparency unpredictably, so the preview needs a
-solid background).
+The opaque icon sits on 50% grey, the one colour Albedo's flip leaves unchanged.
+(social.png, the link-preview image, is made by hand and is not generated here.)
 """
 from pathlib import Path
 
@@ -45,6 +43,5 @@ logo.resize((round(logo.width * h / logo.height), h), Image.LANCZOS).save(
 square(32, 1, False).save(HERE / "favicon-32.png", optimize=True)
 square(192, 6, False).save(HERE / "favicon-192.png", optimize=True)
 square(180, 16, True).save(HERE / "apple-touch-icon.png", optimize=True)
-square(512, 44, True).save(HERE / "social.png", optimize=True)
-for f in ("logo-heading.webp", "favicon-32.png", "favicon-192.png", "apple-touch-icon.png", "social.png"):
+for f in ("logo-heading.webp", "favicon-32.png", "favicon-192.png", "apple-touch-icon.png"):
     print(f, Image.open(HERE / f).size, f"{(HERE / f).stat().st_size / 1e3:.0f} kB")
