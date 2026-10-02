@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+    #!/usr/bin/env python3
 """
 Albedo: flip light <-> dark while keeping hues
 (like CSS `filter: invert(1) hue-rotate(180deg)`).

@@ -3,7 +3,7 @@
 
 Flip plots between dark and light backgrounds while **keeping their hues**: blue stays blue, orange stays orange. Use it to move a figure from a dark talk slide into a light paper, or the other way round, without re-plotting.
 
-![A dark matplotlib figure and its Albedo-flipped light version, side by side](docs/example.png)
+![A light, paper-style matplotlib figure (a toy power spectrum and three density maps) and its Albedo-flipped dark version, side by side](docs/example.png)
 
 A plain colour invert turns blue into orange and yellow into blue. Albedo inverts and then rotates every hue back by 180°, so only light and dark swap. The default mode is the same maths as the CSS filter `invert(1) hue-rotate(180deg)`, so flipped figures match web pages and slides that use that filter.
 
