@@ -17,9 +17,9 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parents[1]))
 import albedo  # noqa: E402
 
-W, H = 5120, 2560            # 2:1, tiles horizontally
+W, H = 3840, 1920            # 2:1, tiles horizontally
 BOX = 2.5                    # field spans this many "readme boxes" vertically
-SMOOTH = 2.0                 # Gaussian smoothing in pixels, removes pixel grain
+SMOOTH = 1.5                 # Gaussian smoothing in pixels, removes pixel grain
 QUALITY = 82
 
 rng = np.random.default_rng(7)

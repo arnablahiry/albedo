@@ -4,12 +4,27 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Albedo</title>
+<meta name="description" content="Flip the lights, keep the colours – make ‘accurate’ dark-mode versions of scientific figures for presentations.">
+<link rel="icon" type="image/png" sizes="32x32" href="docs/images/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="docs/images/favicon-192.png">
+<link rel="apple-touch-icon" href="docs/images/apple-touch-icon.png">
+<!-- link previews (Slack, WhatsApp, iMessage, X, LinkedIn, ...) need absolute URLs -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Albedo">
+<meta property="og:title" content="Albedo">
+<meta property="og:description" content="Flip the lights, keep the colours – make ‘accurate’ dark-mode versions of scientific figures for presentations.">
+<meta property="og:url" content="https://arnablahiry.github.io/albedo/">
+<meta property="og:image" content="https://arnablahiry.github.io/albedo/docs/images/social.png">
+<meta property="og:image:width" content="512">
+<meta property="og:image:height" content="512">
+<meta property="og:image:alt" content="Albedo logo: a pixel-art face, its right half colour-flipped">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Albedo">
+<meta name="twitter:description" content="Flip the lights, keep the colours – make ‘accurate’ dark-mode versions of scientific figures for presentations.">
+<meta name="twitter:image" content="https://arnablahiry.github.io/albedo/docs/images/social.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <link rel="preload" href="docs/fonts/abaddon-light.ttf" as="font" type="font/ttf" crossorigin>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 /* Abaddon (CC BY 3.0); ASCII only, so symbols such as ° × … fall back to IBM Plex */
 @font-face{font-family:"Abaddon";src:url("docs/fonts/abaddon-light.ttf") format("truetype");font-weight:300;font-style:normal;font-display:swap}
@@ -43,7 +58,8 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font
 @media (prefers-reduced-motion:reduce){.sky-pan,.sky-pan .flip{animation:none}}
 .wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
 header{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;padding-block:28px 12px}
-h1{font-family:"Pixelify Sans","IBM Plex Mono",ui-monospace,monospace;font-size:clamp(64px,12vw,120px);font-weight:500;line-height:.9;margin:0;letter-spacing:.03em;text-wrap:balance}
+h1{font-family:"Pixelify Sans","IBM Plex Mono",ui-monospace,monospace;font-size:clamp(64px,12vw,120px);font-weight:500;line-height:.9;margin:0;letter-spacing:.03em;text-wrap:balance;display:inline-flex;align-items:baseline;gap:.18em}
+h1 .mark{height:.72em;height:1cap;width:auto;flex:none}
 .sub{color:var(--muted);margin:0;max-width:52ch;font-size:clamp(18px,calc(2vw + 2px),21px);font-weight:700;line-height:1.45;text-wrap:balance}
 .theme{position:absolute;top:0;right:0;display:inline-flex;align-items:center;gap:7px;font-size:14px;padding:6px 11px}
 .theme svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
@@ -122,7 +138,7 @@ figure{margin:0;display:flex;flex-direction:column;gap:8px;min-width:0}
 figcaption{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;color:var(--muted)}
 figcaption b{color:var(--ink);font-size:15px;font-weight:700}
 .view{border:1px solid var(--line);border-radius:10px;padding:10px;min-height:160px;display:flex;align-items:center;justify-content:center;
-  background:repeating-conic-gradient(color-mix(in srgb,var(--checker) var(--glass),transparent) 0 25%,color-mix(in srgb,var(--panel) var(--glass),transparent) 0 50%) 0 0/16px 16px;-webkit-backdrop-filter:blur(14px) saturate(1.15);backdrop-filter:blur(14px) saturate(1.15)}
+  background:repeating-conic-gradient(color-mix(in srgb,var(--checker) var(--glass),transparent) 0 25%,color-mix(in srgb,var(--panel) var(--glass),transparent) 0 50%) 0 0/16px 16px}
 .view canvas,.view img{display:block;max-width:100%;max-height:70vh;height:auto;width:auto}
 .drop{position:fixed;inset:0;background:color-mix(in srgb,var(--accent) 18%,transparent);border:3px dashed var(--accent);display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:700;pointer-events:none;z-index:5}
 .pager{display:flex;align-items:center;justify-content:center;gap:12px;font-family:var(--mono);font-size:14px}
@@ -150,7 +166,7 @@ figcaption b{color:var(--ink);font-size:15px;font-weight:700}
 <div class="wrap">
   <header>
     <button type="button" class="theme" id="themeBtn" aria-label="Switch colour theme"></button>
-    <h1>Albedo</h1>
+    <h1><img class="mark" src="docs/images/logo-heading.webp" alt="" width="204" height="240">Albedo</h1>
     <p class="sub">Flip the lights, keep the colours.</p>
   </header>
 
@@ -247,6 +263,16 @@ const EXAMPLE = "data:image/webp;base64,UklGRt4xAgBXRUJQVlA4INIxAgDQDwudASr6BXEF
 <script>
 (() => {
 const $ = id => document.getElementById(id);
+// PDF libraries load on demand (and quietly once the page is idle), so they never hold up the first paint
+const PDFJS = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+const PDFJS_WORKER = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+const JSPDF = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+const scripts = {};
+const need = src => scripts[src] ||= new Promise((resolve, reject) => {
+  const el = document.createElement("script"); el.src = src; el.async = true;
+  el.onload = resolve; el.onerror = () => { delete scripts[src]; el.remove(); reject(new Error("could not load " + src)); };
+  document.head.appendChild(el);
+});
 const S = { name: "example_plot", kind: "image", pages: [], page: 0, mode: "css", pdf: null, busy: false };
 let downloads = null;
 
@@ -356,8 +382,9 @@ async function openFile(file) {
   S.busy = true; setButtons();
   try {
     if (isPdf) {
-      if (!window.pdfjsLib) throw new Error("The PDF reader did not load. Reload the page and try again.");
-      pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+      setStatus(`Opening ${file.name}…`);
+      await need(PDFJS).catch(() => { throw new Error("the PDF reader did not load. Check your connection and try again"); });
+      pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
       S.pdf = await pdfjsLib.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
       S.kind = "pdf"; S.pages = await renderPdf();
     } else {
@@ -428,9 +455,9 @@ $("dlPng").onclick = async () => {
 };
 
 $("dlPdf").onclick = async () => {
-  if (!window.jspdf) { setStatus("The PDF writer did not load. Reload the page and try again.", true); return; }
   S.busy = true; setButtons(); setStatus("Building PDF…");
   try {
+    await need(JSPDF).catch(() => { throw new Error("the PDF writer did not load. Check your connection and try again"); });
     const { jsPDF } = window.jspdf; let doc = null;
     S.pages.forEach((p, i) => {
       const o = p.wPt > p.hPt ? "l" : "p";
@@ -560,6 +587,7 @@ const boot = () => examplePlot().then(c => {
   setStatus("Showing a built-in example. Open a file, drop one anywhere on the page, or paste an image.");
 });
 (document.fonts ? document.fonts.ready : Promise.resolve()).then(boot, boot);
+(window.requestIdleCallback || (f => setTimeout(f, 2000)))(() => { need(PDFJS).catch(() => {}); need(JSPDF).catch(() => {}); });
 
 (window.claude?.use ? window.claude.use("downloads") : Promise.resolve(null)).then(d => {
   downloads = d; setButtons();
