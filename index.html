@@ -14,14 +14,14 @@
 <meta property="og:title" content="Albedo">
 <meta property="og:description" content="Flip the lights, keep the colours – make ‘accurate’ dark-mode versions of scientific figures for presentations.">
 <meta property="og:url" content="https://arnablahiry.github.io/albedo/">
-<meta property="og:image" content="https://arnablahiry.github.io/albedo/docs/images/social.png">
+<meta property="og:image" content="https://arnablahiry.github.io/albedo/docs/images/social.png?v=2">
 <meta property="og:image:width" content="512">
 <meta property="og:image:height" content="512">
 <meta property="og:image:alt" content="Albedo logo: a pixel-art face, its right half colour-flipped">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Albedo">
 <meta name="twitter:description" content="Flip the lights, keep the colours – make ‘accurate’ dark-mode versions of scientific figures for presentations.">
-<meta name="twitter:image" content="https://arnablahiry.github.io/albedo/docs/images/social.png">
+<meta name="twitter:image" content="https://arnablahiry.github.io/albedo/docs/images/social.png?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <link rel="preload" href="docs/fonts/abaddon-light.ttf" as="font" type="font/ttf" crossorigin>
@@ -150,7 +150,8 @@ figcaption b{color:var(--ink);font-size:15px;font-weight:700}
 .credit img{display:block}
 .credit .avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
 .credit span{font-size:19px;font-weight:700;color:var(--ink)}
-.credit .made{font-weight:300;margin-right:-4px}
+.credit .made{display:inline-flex;align-items:center;gap:.35em;font-weight:300;margin-right:-4px}
+.credit .heart{height:.8em;width:auto;fill:#ff7b80;shape-rendering:crispEdges;flex:none}
 .credit .sep{width:1px;height:34px;background:var(--muted);opacity:.6}
 .credit .logo{height:17px;width:auto}
 /* dark mode: flip the black wordmark with Albedo's own trick, the mark keeps its orange */
@@ -245,7 +246,7 @@ figcaption b{color:var(--ink);font-size:15px;font-weight:700}
   <div class="status" id="status" aria-live="polite">Showing a built-in example. Open a file or drop one anywhere on the page.</div>
   <p class="note">Everything runs in your browser; files are not uploaded. PDF pages are turned into images at the DPI you pick, so the downloaded PDF is not vector. Download image on a multi-page PDF saves the page you are viewing.</p>
   <footer class="credit">
-    <span class="made">Made by</span>
+    <span class="made">Made with <svg class="heart" viewBox="0 0 7 6" role="img" aria-label="love"><path d="M1 0h1v1h-1zM2 0h1v1h-1zM4 0h1v1h-1zM5 0h1v1h-1zM0 1h1v1h-1zM1 1h1v1h-1zM2 1h1v1h-1zM3 1h1v1h-1zM4 1h1v1h-1zM5 1h1v1h-1zM6 1h1v1h-1zM0 2h1v1h-1zM1 2h1v1h-1zM2 2h1v1h-1zM3 2h1v1h-1zM4 2h1v1h-1zM5 2h1v1h-1zM6 2h1v1h-1zM1 3h1v1h-1zM2 3h1v1h-1zM3 3h1v1h-1zM4 3h1v1h-1zM5 3h1v1h-1zM2 4h1v1h-1zM3 4h1v1h-1zM4 4h1v1h-1zM3 5h1v1h-1z"/></svg> by</span>
     <a class="me" href="https://arnablahiry.github.io/" target="_blank" rel="noopener">
       <img class="avatar" src="docs/images/arnab.jpg" alt="" onerror="this.hidden=true">
       <span>Arnab Lahiry</span>

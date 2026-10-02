@@ -8,37 +8,32 @@ Writes, next to this file
   favicon-192.png        larger icon (Android, bookmarks)
   apple-touch-icon.png   180 px, opaque (iOS shows transparency as black)
   social.png             512 px, opaque, the image shown in link previews
-The opaque icons sit on a split background, light behind the original half
-of the face and dark behind its flipped half.
+The opaque icons sit on 50% grey, the one colour Albedo's flip leaves unchanged
+(apps such as WhatsApp fill transparency unpredictably, so the preview needs a
+solid background).
 """
 from pathlib import Path
 
-from PIL import Image, ImageDraw
+from PIL import Image
 
 HERE = Path(__file__).resolve().parent
-LIGHT, DARK = (245, 244, 240, 255), (16, 15, 12, 255)      # the page's --bg in each theme
-SPLIT = 358 / 635                                          # where the flipped half starts
+GREY = (128, 128, 128)                                     # invert + hue-rotate(180deg) maps it to itself
 
 logo = Image.open(HERE / "logo.png").convert("RGBA")
 logo = logo.crop(logo.getbbox())
-split_px = SPLIT * 635 - Image.open(HERE / "logo.png").getbbox()[0]   # split, in cropped pixels
 
 
 def fit(size, pad):
     """Logo scaled to fit a size x size square with `pad` margin; returns (image, x, y)."""
     s = (size - 2 * pad) / max(logo.size)
     im = logo.resize((round(logo.width * s), round(logo.height * s)), Image.LANCZOS)
-    return im, (size - im.width) // 2, (size - im.height) // 2, s
+    return im, (size - im.width) // 2, (size - im.height) // 2
 
 
 def square(size, pad, opaque):
-    im, x, y, s = fit(size, pad)
-    out = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    im, x, y = fit(size, pad)
+    out = Image.new("RGBA", (size, size), (*GREY, 255) if opaque else (0, 0, 0, 0))
     if opaque:
-        cut = x + round(split_px * s)
-        d = ImageDraw.Draw(out)
-        d.rectangle([0, 0, cut - 1, size], fill=LIGHT)
-        d.rectangle([cut, 0, size, size], fill=DARK)
         y = size - im.height                               # the bust is cut flat: sit it on the bottom edge
     out.alpha_composite(im, (x, y))
     return out if not opaque else out.convert("RGB")
